@@ -18,6 +18,13 @@ export async function main(ns) {
     "max-hardware",
     "iron-gym"];
 
+  const servers2Port = ["silver-helix",
+    "phantasy",
+    "omega-net",
+    "the-hub",
+    "avmnite-02h"
+  ];
+
   // Copy our scripts onto each server that requires 0 ports
   // to gain root access. Then use nuke() to gain admin access and
   // run the scripts.
@@ -48,5 +55,20 @@ export async function main(ns) {
     ns.nuke(serv);
     ns.killall(serv);
     ns.exec("batch-hacking/supervisor.js", serv, 1, target);
+  }
+
+  // Crack and run botnet on lvl2 servers
+  if (ns.fileExists("FTPCrack.exe")) {
+    for (let i = 0; i < servers2Port.length; ++i) {
+      const serv = servers2Port[i];
+
+      ns.scp("batch-hacking/supervisor.js", serv);
+      ns.scp("batch-hacking/os-runner.js", serv);
+      ns.brutessh(serv);
+      ns.ftpcrack(serv);
+      ns.nuke(serv);
+      ns.killall(serv);
+      ns.exec("batch-hacking/supervisor.js", serv, 1, target);
+    }
   }
 }
